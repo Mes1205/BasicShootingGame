@@ -11,6 +11,8 @@ public class InputManager : MonoBehaviour
     private PlayerMotor motor;
     private PlayerLook look;
 
+    private Weapon weapon;
+
     void Awake()
     {
         playerInput = new PlayerInput();
@@ -18,7 +20,9 @@ public class InputManager : MonoBehaviour
         
         motor = GetComponent<PlayerMotor>();
         look = GetComponent<PlayerLook>();
+        weapon = GetComponent<Weapon>();
 
+        onFoot.Shoot.performed += ctx => weapon.FireWeapon();
         onFoot.Jump.performed += ctx => motor.Jump();
 
         onFoot.Crouch.performed += ctx => motor.Crouch();
