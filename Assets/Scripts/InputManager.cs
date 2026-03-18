@@ -1,16 +1,13 @@
-using System.Collections;
-using System.Collections.Generic; // Perbaikan: 'using' bukan 'USING'
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class InputManager : MonoBehaviour
 {
     private PlayerInput playerInput;
-    private PlayerInput.OnFootActions onFoot; // Perbaikan: Biasanya ada akhiran 's'
+    public PlayerInput.OnFootActions onFoot; 
 
     private PlayerMotor motor;
     private PlayerLook look;
-
     private Weapon weapon;
 
     void Awake()
@@ -22,34 +19,43 @@ public class InputManager : MonoBehaviour
         look = GetComponent<PlayerLook>();
         weapon = GetComponent<Weapon>();
 
-        onFoot.Shoot.performed += ctx => weapon.FireWeapon();
-        onFoot.Jump.performed += ctx => motor.Jump();
+        // Berikan perlindungan agar tidak error jika weapon/motor kosong
+        onFoot.Shoot.performed += ctx => {
+            if (weapon != null) weapon.FireWeapon();
+        };
 
-        onFoot.Crouch.performed += ctx => motor.Crouch();
-        onFoot.Sprint.performed += ctx => motor.Sprint();
+        onFoot.Jump.performed += ctx => {
+            if (motor != null) motor.Jump();
+        };
+
+        onFoot.Crouch.performed += ctx => {
+            if (motor != null) motor.Crouch();
+        };
+
+        onFoot.Sprint.performed += ctx => {
+            if (motor != null) motor.Sprint();
+        };
     }
 
     void FixedUpdate()
     {
-        // Mengirimkan input Vector2 ke PlayerMotor
-        motor.ProcessMove(onFoot.Movement.ReadValue<Vector2>());
+        if (motor != null)
+            motor.ProcessMove(onFoot.Movement.ReadValue<Vector2>());
     }
 
     void LateUpdate()
     {
-        // Mengirimkan input Vector2 ke PlayerLook
-        look.ProcessLook(onFoot.Look.ReadValue<Vector2>());
+        if (look != null)
+            look.ProcessLook(onFoot.Look.ReadValue<Vector2>());
     }
 
     private void OnEnable()
     {
-        onFoot.Enable();
+        playerInput.Enable(); // MENYALAKAN SEMUA INPUT
     }
 
     private void OnDisable()
     {
-        onFoot.Disable();
+        playerInput.Disable(); // MEMATIKAN SEMUA INPUT
     }
-
-    
 }

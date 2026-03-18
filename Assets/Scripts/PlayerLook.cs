@@ -3,7 +3,6 @@ using UnityEngine;
 public class PlayerLook : MonoBehaviour
 {
     public Camera cam;
-    public Transform weaponHolder; // TAMBAHKAN INI: Tarik objek senjata/pistol ke sini
     
     private float xRotation = 0f;
 
@@ -34,12 +33,6 @@ public class PlayerLook : MonoBehaviour
 
         // 1. Terapkan ke kamera
         cam.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-
-        // 2. Terapkan ke senjata (TAMBAHKAN INI)
-        if (weaponHolder != null)
-        {
-            weaponHolder.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-        }
 
         // Putar tubuh pemain (Kiri/Kanan)
         transform.Rotate(Vector3.up * (mouseX * Time.deltaTime) * currentXSensitivity);
